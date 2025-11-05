@@ -1,3 +1,4 @@
+<!-- #ZEROPS_REMOVE_START# -->
 # Zerops x Laravel Jetstream
 
 [Laravel Jetstream](https://jetstream.laravel.com/introduction.html) is an advanced starter kit by Laravel. [Zerops](https://zerops.io) recipe for Jetstream includes all the advanced functionality — session and cache stored in Redis and files stored in Object Storage, this makes it perfectly suitable for production of any size.
@@ -13,6 +14,30 @@ You can either click the deploy button to deploy directly on Zerops, or manually
 
 <br/>
 
+## Integration Guide
+<!-- #ZEROPS_REMOVE_END# -->
+
+> [!TIP]
+> One-click deployments use [this repository](https://github.com/zerops-recipe-apps/laravel-jetstream-app) as the deployment source.
+> Feel free to explore further by using this repository as a template, or follow the guide below to integrate a similar setup into Zerops.
+> For more examples, check out all of our [PHP recipes](https://app.zerops.io/recipes?lf=php).
+
+### 1. Adding `zerops.yaml`
+TODO
+
+```yaml
+TODO
+```
+
+### 2. TODO
+If you want to modify your existing Laravel/Jetstream app to efficiently run on Zerops, these are the general steps we took:
+
+- Add [zerops.yml](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops.yml) to your repository, our example includes idempotent migrations, caching, and optimized build process
+- Add [league/flysystem-aws-s3-v3](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/composer.json#L14) to your composer.json to support Object Storage file system
+- Setup [Jetstream config](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/config/jetstream.php#L79) to use object storage for file system
+- Utilize Zerops [environment variables](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops.yml#L25-L75) and [secrets](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops-project-import.yml#L12-L16) to setup S3 for file system, Redis for cache and sessions, and trusted proxies to work with reverse proxy load balancer
+
+<!-- #ZEROPS_REMOVE_START# -->
 ## Understand Zerops Core Concepts
 If you want to try integrating Zerops from scratch on a new Laravel project, check our [step-by-step tutorial](https://docs.zerops.io/frameworks/laravel/introduction) which demonstrates how to use Zerops effectively with Laravel.
 
@@ -54,3 +79,4 @@ If you want to modify your existing Laravel/Jetstream app to efficiently run on 
 <br/>
 
 Need help setting your project up? Join [Zerops Discord community](https://discord.com/invite/WDvCZ54).
+<!-- #ZEROPS_REMOVE_END# -->

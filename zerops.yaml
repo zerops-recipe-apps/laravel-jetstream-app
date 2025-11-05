@@ -1,28 +1,6 @@
 zerops:
-  - setup: app
-    build:
-      base:
-        - php@8.4
-        - nodejs@18
-      os: ubuntu
-      buildCommands:
-        - composer install --optimize-autoloader --no-dev
-        - npm install
-        - npm run build
-      deployFiles: ./
-      cache:
-        - vendor
-        - composer.lock
-        - node_modules
-        - package-lock.json
-    deploy:
-      readinessCheck:
-        httpGet:
-          port: 80
-          path: /up
+  - setup: base
     run:
-      base: php-nginx@8.4
-      os: ubuntu
       siteConfigPath: site.conf.tmpl
       envVariables:
         APP_LOCALE: en
@@ -75,6 +53,36 @@ zerops:
         BCRYPT_ROUNDS: 12
         TRUSTED_PROXIES: "*"
         FILESYSTEM_DISK: s3
+
+  - setup: prod
+    extends: base
+    build:
+      os: ubuntu
+      base:
+        - php@8.4
+        - nodejs@18
+      buildCommands:
+        - composer install --optimize-autoloader --no-dev
+        - npm install
+        - npm run build
+      deployFiles: ./
+      cache:
+        - vendor
+        - composer.lock
+        - node_modules
+        - package-lock.json
+    deploy:
+      readinessCheck:
+        httpGet:
+          port: 80
+          path: /up
+    run:
+      os: ubuntu
+      base: php-nginx@8.4
+      envVariables:
+        APP_NAME: ZeropsLaravelJetstreamProd
+        APP_DEBUG: false
+        APP_ENV: production
       initCommands:
         - php artisan view:cache
         - php artisan config:cache
@@ -85,3 +93,19 @@ zerops:
         httpGet:
           port: 80
           path: /up
+
+  - setup: dev
+    extends: base
+    build:
+      base: ubuntu@latest
+      deployFiles: ./
+    run:
+      os: ubuntu
+      base: php-nginx@8.4
+      envVariables:
+        APP_NAME: ZeropsLaravelJetstreamDev
+        APP_DEBUG: true
+        APP_ENV: development
+      initCommands:
+        - composer install
+        - npm install
