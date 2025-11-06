@@ -74,6 +74,7 @@ If you want to modify your existing Laravel/Jetstream app to efficiently run on 
 - Add [league/flysystem-aws-s3-v3](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/composer.json#L14) to your composer.json to support Object Storage file system
 - Setup [Jetstream config](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/config/jetstream.php#L79) to use object storage for file system
 - Utilize Zerops [environment variables](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops.yml#L25-L75) and [secrets](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops-project-import.yml#L12-L16) to setup S3 for file system, Redis for cache and sessions, and trusted proxies to work with reverse proxy load balancer
+- In case of true production setup, setup `MAIL_` environments to match your SMTP provider or server.
 
 <br/>
 <br/>

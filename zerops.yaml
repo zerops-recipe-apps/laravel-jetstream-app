@@ -1,7 +1,22 @@
+# This example app uses two setups:
+# 'prod' for building, deploying, and running the app
+# in production or staging environments.
+# 'dev' for deploying the source code into a development
+# environment with the required toolset.
 zerops:
+  # Define shared 'base' setup to prevent duplication.
+  # Both final setups will use the same subset of environment
+  # variables and same Nginx config ('siteConfigPath').
   - setup: base
     run:
+      os: ubuntu
+      base: php-nginx@8.4
+      # PHP applications generally require a web server
+      # such as Nginx or Apache HTTP server.
+      # Read more about it here: https://docs.zerops.io/php/how-to/customize-web-server#customize-nginx-configuration
       siteConfigPath: site.conf.tmpl
+      # Most of the environment variables are shared between
+      # the two setups, define once and reuse via 'extend' directive.
       envVariables:
         APP_LOCALE: en
         APP_FAKER_LOCALE: en_US
@@ -9,16 +24,19 @@ zerops:
         APP_MAINTENANCE_DRIVER: file
         APP_MAINTENANCE_STORE: database
         APP_TIMEZONE: UTC
+        # Laravel checks the 'Host' header against this value.
+        # Feel free to change this value to your own custom domain,
+        # after setting up the domain access.
         APP_URL: ${zeropsSubdomain}
         ASSET_URL: ${APP_URL}
         VITE_APP_NAME: ${APP_NAME}
 
         DB_CONNECTION: pgsql
-        DB_DATABASE: db
         DB_HOST: db
-        DB_PASSWORD: ${db_password}
-        DB_PORT: 5432
+        DB_PORT: ${db_port}
+        DB_DATABASE: ${db_dbName}
         DB_USERNAME: ${db_user}
+        DB_PASSWORD: ${db_password}
 
         AWS_ACCESS_KEY_ID: ${storage_accessKeyId}
         AWS_REGION: us-east-1
@@ -26,12 +44,23 @@ zerops:
         AWS_ENDPOINT: ${storage_apiUrl}
         AWS_SECRET_ACCESS_KEY: ${storage_secretAccessKey}
         AWS_URL: ${storage_apiUrl}/${storage_bucketName}
+        # Zerops' S3-like object storage uses 'path-style' endpoints,
+        # this is required to set with most AWS S3 libraries out there.
         AWS_USE_PATH_STYLE_ENDPOINT: true
 
+        # Zerops automatically collects std out/err
+        # of defined commands executions (start, init, build, prepare, ...),
+        # and forwards them to syslog.
+        # Since PHP is spawned as a worker process by Nginx FastCGI,
+        # we have to tell our PHP application to log to the syslog directly,
+        # as there is no simple other way to capture std out/err of request execution.
         LOG_CHANNEL: syslog
         LOG_LEVEL: debug
         LOG_STACK: single
 
+        # Configure this to use real SMTP sinks
+        # in true production setups. This default configuration
+        # expects 'mailpit' to be deployed along this app.
         MAIL_FROM_ADDRESS: hello@example.com
         MAIL_FROM_NAME: ZeropsLaravel
         MAIL_HOST: mailpit
@@ -52,43 +81,65 @@ zerops:
 
         BCRYPT_ROUNDS: 12
         TRUSTED_PROXIES: "*"
+        # Specify S3-like object storage as filesystem.
         FILESYSTEM_DISK: s3
 
   - setup: prod
     extends: base
+    # In the 'prod' setup, we have to build and deploy
+    # the application, basically get it ready to serve users.
     build:
+      # Build in Ubuntu container with PHP and Node.js toolsets installed.
       os: ubuntu
       base:
         - php@8.4
-        - nodejs@18
+        - nodejs@22
+      # The Laravel Jetstream example app uses Inertia + Vue.js stack
+      # (https://jetstream.laravel.com/introduction.html#inertia-vue).
+      # Download 'vendor' dependencies via 'composer' and install
+      # 'node_modules' dependencies and build the Inertia stack via 'npm'.
       buildCommands:
         - composer install --optimize-autoloader --no-dev
         - npm install
         - npm run build
+      # Deploy all source, fetched and built application files.
       deployFiles: ./
+      # Cache dependencies for faster incremental builds.
+      # For more information, please visit: https://docs.zerops.io/features/build-cache
       cache:
         - vendor
         - composer.lock
         - node_modules
         - package-lock.json
+    # Showing how to define simple readiness check,
+    # when new application version is being deployed.
+    # If this check fails, the being-deployed version
+    # is probably not functional and thus deploy is aborted,
+    # leaving the previous working version running.
+    # More about it here: https://docs.zerops.io/zerops-yaml/specification#readinesscheck-
     deploy:
       readinessCheck:
         httpGet:
           port: 80
           path: /up
     run:
-      os: ubuntu
-      base: php-nginx@8.4
+      # Turn off debug and set other setup-specific environment variables.
       envVariables:
         APP_NAME: ZeropsLaravelJetstreamProd
         APP_DEBUG: false
         APP_ENV: production
+      # Run these pre-heat and migration commands,
+      # right after creating every runtime container
+      # of the given application version (associated with this 'zerops.yaml').
       initCommands:
         - php artisan view:cache
         - php artisan config:cache
         - php artisan route:cache
         - php artisan migrate --isolated --force
         - php artisan optimize
+      # Zerops also supports continuous health-checks
+      # in already running deployed runtime containers.
+      # More about it here: https://docs.zerops.io/zerops-yaml/specification#healthcheck-
       healthCheck:
         httpGet:
           port: 80
@@ -96,16 +147,31 @@ zerops:
 
   - setup: dev
     extends: base
+    # In this development setup used for Remote Development (CDE)
+    # or by AI Agents, we care only about deploying the application
+    # source code, so we can further develop and test the app.
     build:
       base: ubuntu@latest
       deployFiles: ./
     run:
-      os: ubuntu
-      base: php-nginx@8.4
+      # Since runtime containers are not allowed to be combined
+      # from multiple bases, install Node so we have it available
+      # for the Inertia + Vue UI development.
+      prepareCommands:
+        - curl -sL https://deb.nodesource.com/setup_22.x -o /tmp/node_setup.sh
+        - sudo bash /tmp/node_setup.sh
+        - sudo apt-get install nodejs
+        - node -v
+      # Turn on debug and set other setup-specific environment variables.
       envVariables:
         APP_NAME: ZeropsLaravelJetstreamDev
         APP_DEBUG: true
         APP_ENV: development
+      # Only the source code is being deployed,
+      # run these extra install commands after creating runtime
+      # container for smoother, ready-to-dive-in
+      # remote development experience.
       initCommands:
+        - zsc scale ram +0.5GB 10m
         - composer install
         - npm install
