@@ -63,6 +63,8 @@ zerops:
         # Configure this to use real SMTP sinks
         # in true production setups. This default configuration
         # expects 'mailpit' to be deployed along the app.
+        # Note that port 25 is restricted on Zerops by default,
+        # see https://docs.zerops.io/references/smtp for clarification.
         MAIL_FROM_ADDRESS: hello@example.com
         MAIL_FROM_NAME: ZeropsLaravel
         MAIL_HOST: mailpit
@@ -174,5 +176,5 @@ zerops:
       # after container creation to provide a ready-to-dive-in experience.
       initCommands:
         - zsc scale ram +0.5GB 10m
-        - composer install
+        - export HOME; composer install
         - npm install

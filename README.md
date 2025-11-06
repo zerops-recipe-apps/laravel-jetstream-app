@@ -8,7 +8,7 @@
 <br/>
 
 ## Deploy on Zerops
-You can either click the deploy button to deploy directly on Zerops, or manually copy the [import yaml](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops-project-import.yml) to the import dialog in the Zerops app.
+You can either click the deploy button to deploy directly on Zerops, or manually copy the [import yaml](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops-project-import.yml) to the import dialog in the Zerops app.
 
 [![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/green/deploy-button.svg)](https://app.zerops.io/recipe/laravel)
 
@@ -17,13 +17,15 @@ You can either click the deploy button to deploy directly on Zerops, or manually
 ## Integration Guide
 <!-- #ZEROPS_REMOVE_END# -->
 
-> [!TIP]
-> One-click deployments use [this repository](https://github.com/zerops-recipe-apps/laravel-jetstream-app) as the deployment source.
-> Feel free to explore further by using this repository as a template, or follow the guide below to integrate a similar setup into Zerops.
+> [!NOTE]
+> This recipe's one-click deployments use [this repository](https://github.com/zerops-recipe-apps/laravel-jetstream-app) as the deployment source.
+> Feel free to explore further by using that repository as a template, or follow the guide below to integrate a similar setup into Zerops.
 > For more examples, check out all of our [PHP recipes](https://app.zerops.io/recipes?lf=php).
 
-### 1. Adding `zerops.yaml`
-TODO
+### 1. Add `zerops.yaml`
+Add the following `zerops.yaml` file to the root of your repository. The `zerops.yaml` file defines how Zerops should build, deploy and run your application. Feel free to customize it to better suit your application's needs.
+
+This example includes idempotent migrations, caching, optimized build process and support for remote or agent development.
 
 ```yaml
 # This example app uses two setups:
@@ -206,13 +208,18 @@ zerops:
         - npm install
 ```
 
-### 2. TODO
-If you want to modify your existing Laravel/Jetstream app to efficiently run on Zerops, these are the general steps we took:
+### 2. Add Support For Object Storage
+- add [`league/flysystem-aws-s3-v3`](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/composer.json#L14) to your `composer.json` or alternatively run:
+```bash
+composer require league/flysystem-aws-s3-v3 "^3.0"
+```
+- update the Jetstream config [`config/jetstream.php`](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/config/jetstream.php#L79) to use `s3`
 
-- Add [zerops.yml](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops.yml) to your repository, our example includes idempotent migrations, caching, and optimized build process
-- Add [league/flysystem-aws-s3-v3](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/composer.json#L14) to your composer.json to support Object Storage file system
-- Setup [Jetstream config](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/config/jetstream.php#L79) to use object storage for file system
-- Utilize Zerops [environment variables](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops.yml#L25-L75) and [secrets](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops-project-import.yml#L12-L16) to setup S3 for file system, Redis for cache and sessions, and trusted proxies to work with reverse proxy load balancer
+### 3. Utilize Environment Variables
+Utilize [environment variables](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops.yml#L25-L75) and [secrets](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops-project-import.yml#L12-L16) to set up S3 for file system, Redis for cache and sessions, and trusted proxies to work with reverse proxy load balancer.
+
+### 4. Setup Production Mailer
+In case of real production setup, change the `MAIL_` environment variables to match your SMTP provider or server.
 
 <!-- #ZEROPS_REMOVE_START# -->
 ## Understand Zerops Core Concepts
@@ -247,10 +254,10 @@ Base of the recipe is ready for production, the difference comes down to:
 
 If you want to modify your existing Laravel/Jetstream app to efficiently run on Zerops, these are the general steps we took:
 
-- Add [zerops.yml](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops.yml) to your repository, our example includes idempotent migrations, caching, and optimized build process
-- Add [league/flysystem-aws-s3-v3](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/composer.json#L14) to your composer.json to support Object Storage file system
-- Setup [Jetstream config](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/config/jetstream.php#L79) to use object storage for file system
-- Utilize Zerops [environment variables](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops.yml#L25-L75) and [secrets](https://github.com/zeropsio/recipe-laravel-jetstream/blob/main/zerops-project-import.yml#L12-L16) to setup S3 for file system, Redis for cache and sessions, and trusted proxies to work with reverse proxy load balancer
+- Add [zerops.yml](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops.yml) to your repository, our example includes idempotent migrations, caching, and optimized build process
+- Add [league/flysystem-aws-s3-v3](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/composer.json#L14) to your composer.json to support Object Storage file system
+- Setup [Jetstream config](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/config/jetstream.php#L79) to use object storage for file system
+- Utilize Zerops [environment variables](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops.yml#L25-L75) and [secrets](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops-project-import.yml#L12-L16) to setup S3 for file system, Redis for cache and sessions, and trusted proxies to work with reverse proxy load balancer
 - In case of true production setup, setup `MAIL_` environments to match your SMTP provider or server.
 
 <br/>
