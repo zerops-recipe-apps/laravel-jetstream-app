@@ -11,6 +11,8 @@ zerops:
     run:
       os: ubuntu
       base: php-nginx@8.4
+      # This setup uses PHP 8.4, which is compatible with the application's
+      # requirement of PHP ^8.2 as specified in composer.json.
       # PHP applications generally require a web server
       # such as Nginx or Apache HTTP server.
       # Read more about it here: https://docs.zerops.io/php/how-to/customize-web-server#customize-nginx-configuration
@@ -52,7 +54,7 @@ zerops:
         # of defined commands executions (start, init, build, prepare, ...),
         # and forwards them to syslog.
         # Since PHP is spawned as a worker process by Nginx FastCGI,
-        # we have to tell our PHP application to log to the syslog directly,
+        # we have to tell the PHP application to log to the syslog directly,
         # as there is no simple other way to capture std out/err of request execution.
         LOG_CHANNEL: syslog
         LOG_LEVEL: debug
@@ -60,7 +62,7 @@ zerops:
 
         # Configure this to use real SMTP sinks
         # in true production setups. This default configuration
-        # expects 'mailpit' to be deployed along this app.
+        # expects 'mailpit' to be deployed along the app.
         MAIL_FROM_ADDRESS: hello@example.com
         MAIL_FROM_NAME: ZeropsLaravel
         MAIL_HOST: mailpit
@@ -89,15 +91,16 @@ zerops:
     # In the 'prod' setup, we have to build and deploy
     # the application, basically get it ready to serve users.
     build:
-      # Build in Ubuntu container with PHP and Node.js toolsets installed.
+      # Build in Ubuntu container with PHP 8.4 and Node.js 22 toolsets installed,
+      # matching the versions used in the runtime environment.
       os: ubuntu
       base:
         - php@8.4
         - nodejs@22
-      # The Laravel Jetstream example app uses Inertia + Vue.js stack
+      # The Laravel Jetstream example app uses Inertia with Vue.js stack
       # (https://jetstream.laravel.com/introduction.html#inertia-vue).
-      # Download 'vendor' dependencies via 'composer' and install
-      # 'node_modules' dependencies and build the Inertia stack via 'npm'.
+      # Download PHP dependencies via Composer and install Node.js dependencies,
+      # then build the Inertia frontend assets including SSR support via npm.
       buildCommands:
         - composer install --optimize-autoloader --no-dev
         - npm install
@@ -147,16 +150,15 @@ zerops:
 
   - setup: dev
     extends: base
-    # In this development setup used for Remote Development (CDE)
-    # or by AI Agents, we care only about deploying the application
-    # source code, so we can further develop and test the app.
+    # In this development setup used for Remote Development environments
+    # or by AI agents, we deploy only the application source code
+    # to enable further development and testing.
     build:
       base: ubuntu@latest
       deployFiles: ./
     run:
-      # Since runtime containers are not allowed to be combined
-      # from multiple bases, install Node so we have it available
-      # for the Inertia + Vue UI development.
+      # Since runtime containers cannot combine multiple base images,
+      # install Node.js manually to support Inertia and Vue.js development.
       prepareCommands:
         - curl -sL https://deb.nodesource.com/setup_22.x -o /tmp/node_setup.sh
         - sudo bash /tmp/node_setup.sh
@@ -167,10 +169,8 @@ zerops:
         APP_NAME: ZeropsLaravelJetstreamDev
         APP_DEBUG: true
         APP_ENV: development
-      # Only the source code is being deployed,
-      # run these extra install commands after creating runtime
-      # container for smoother, ready-to-dive-in
-      # remote development experience.
+      # With only source code deployed, we run these extra commands
+      # after container creation to provide a ready-to-dive-in experience.
       initCommands:
         - zsc scale ram +0.5GB 10m
         - composer install
