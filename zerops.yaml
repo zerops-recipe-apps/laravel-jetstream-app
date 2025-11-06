@@ -82,6 +82,7 @@ zerops:
         SESSION_PATH: /
 
         BCRYPT_ROUNDS: 12
+        # Allow running behind reverse proxy (Zerops L7 HTTP balancer service).
         TRUSTED_PROXIES: "*"
         # Specify S3-like object storage as filesystem.
         FILESYSTEM_DISK: s3
