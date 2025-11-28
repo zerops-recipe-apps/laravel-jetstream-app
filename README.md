@@ -17,11 +17,6 @@ You can either click the deploy button to deploy directly on Zerops, or manually
 ## Integration Guide
 <!-- #ZEROPS_REMOVE_END# -->
 
-> [!NOTE]
-> This recipe's one-click deployments use [this repository](https://github.com/zerops-recipe-apps/laravel-jetstream-app) as the deployment source.
-> Feel free to explore further by using that repository as a template, or follow the guide below to integrate a similar setup into Zerops.
-> For more examples, check out all of our [PHP recipes](https://app.zerops.io/recipes?lf=php).
-
 ### 1. Add `zerops.yaml`
 Add the following `zerops.yaml` file to the root of your repository. The `zerops.yaml` file defines how Zerops should build, deploy and run your application. Feel free to customize it to better suit your application's needs.
 
