@@ -1,4 +1,3 @@
-<!-- #ZEROPS_REMOVE_START# -->
 # Zerops x Laravel Jetstream
 
 [Laravel Jetstream](https://jetstream.laravel.com/introduction.html) is an advanced starter kit by Laravel. [Zerops](https://zerops.io) recipe for Jetstream includes all the advanced functionality — session and cache stored in Redis and files stored in Object Storage, this makes it perfectly suitable for production of any size.
@@ -15,7 +14,8 @@ You can either click the deploy button to deploy directly on Zerops, or manually
 <br/>
 
 ## Integration Guide
-<!-- #ZEROPS_REMOVE_END# -->
+
+<!-- #ZEROPS_EXTRACT_START:integration-guide# -->
 
 ### 1. Add `zerops.yaml`
 Add the following `zerops.yaml` file to the root of your repository. The `zerops.yaml` file defines how Zerops should build, deploy and run your application. Feel free to customize it to better suit your application's needs.
@@ -216,7 +216,8 @@ Utilize [environment variables](https://github.com/zerops-recipe-apps/laravel-je
 ### 4. Setup Production Mailer
 In case of real production setup, change the `MAIL_` environment variables to match your SMTP provider or server.
 
-<!-- #ZEROPS_REMOVE_START# -->
+<!-- #ZEROPS_EXTRACT_END:integration-guide# -->
+
 ## Understand Zerops Core Concepts
 If you want to try integrating Zerops from scratch on a new Laravel project, check our [step-by-step tutorial](https://docs.zerops.io/frameworks/laravel/introduction) which demonstrates how to use Zerops effectively with Laravel.
 
@@ -259,4 +260,3 @@ If you want to modify your existing Laravel/Jetstream app to efficiently run on 
 <br/>
 
 Need help setting your project up? Join [Zerops Discord community](https://discord.com/invite/WDvCZ54).
-<!-- #ZEROPS_REMOVE_END# -->
