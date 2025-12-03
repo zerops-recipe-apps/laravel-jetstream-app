@@ -1,7 +1,7 @@
 # Zerops x Laravel Jetstream
 
 <!-- #ZEROPS_EXTRACT_START:intro# -->
-[Laravel Jetstream](https://jetstream.laravel.com/introduction.html) is the core application that serves the is an advanced starter kit by Laravel. This showcases how to best integrate Jetstream apps with Zerops to setup the deploy pipeline, configure for high availability and handle migrations and upgrades.
+[Laravel Jetstream](https://jetstream.laravel.com/introduction.html) is an advanced starter kit by Laravel. This showcases how to best integrate Jetstream apps with Zerops to setup the deploy pipeline, configure for high availability and handle migrations and upgrades.
 <!-- #ZEROPS_EXTRACT_END:intro# -->
 
 ![laravel](https://github.com/zeropsio/recipe-shared-assets/blob/main/covers/svg/cover-laravel.svg)
