@@ -1,6 +1,8 @@
 # Zerops x Laravel Jetstream
 
-[Laravel Jetstream](https://jetstream.laravel.com/introduction.html) is an advanced starter kit by Laravel. [Zerops](https://zerops.io) recipe for Jetstream includes all the advanced functionality — session and cache stored in Redis and files stored in Object Storage, this makes it perfectly suitable for production of any size.
+<!-- #ZEROPS_EXTRACT_START:intro# -->
+[Laravel Jetstream](https://jetstream.laravel.com/introduction.html) is the core application that serves the is an advanced starter kit by Laravel. This showcases how to best integrate Jetstream apps with Zerops to setup the deploy pipeline, configure for high availability and handle migrations and upgrades.
+<!-- #ZEROPS_EXTRACT_END:intro# -->
 
 ![laravel](https://github.com/zeropsio/recipe-shared-assets/blob/main/covers/svg/cover-laravel.svg)
 
