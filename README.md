@@ -8,8 +8,8 @@
 
 <br/>
 
-## Deploy on Zerops
-You can either click the deploy button to deploy directly on Zerops, or manually copy the [import yaml](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops-project-import.yml) to the import dialog in the Zerops app.
+## Deploy to Zerops
+You can either click the deploy button to deploy directly to Zerops, or manually copy the [import yaml](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops-project-import.yml) to the import dialog in the Zerops app.
 
 [![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/green/deploy-button.svg)](https://app.zerops.io/recipe/laravel)
 
@@ -238,7 +238,7 @@ If you want to try integrating Zerops from scratch on a new Laravel project, che
 
 <br/>
 
-## Production vs. development
+## Production vs. Development
 
 Base of the recipe is ready for production, the difference comes down to:
 
@@ -246,19 +246,25 @@ Base of the recipe is ready for production, the difference comes down to:
 - Use at least two containers for Jetstream service to achieve high reliability and resilience (add `minContainers: 2` in recipe YAML, `app` service section)
 - Use production-ready third-party SMTP server instead of Mailpit (change `MAIL_` secret variables in recipe YAML `app` service)
 
+## Tips and Others
+
+<!-- #ZEROPS_EXTRACT_START:knowledge-base# -->
+
+### Temporary Upscaling when Playing Around
+
+Efficiently configured deployments use just enough resources (especially RAM) to save costs.
+But sometimes developers need to run ad-hoc maintenance tasks (clearing cache, exporting data, manually processing queues, ...) in live deployments,
+or run heavier development commands (installing packages, compiling code, ...) in remote development environments.
+
+Zerops allows to temporarily up-scale allocated resources via [`zsc scale` command](https://docs.zerops.io/references/zsc#scale), right from the console,
+without to need to change service settings.
+
+This tool is utilized in the [`run.initCommands` in `dev` setup](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops.yaml) of this recipe app,
+to allocate extra resource for the `composer install` and `npm install` commands.
+
+<!-- #ZEROPS_EXTRACT_END:knowledge-base# -->
+
+<br/>
 <br/>
 
-## Changes made over the default installation
-
-If you want to modify your existing Laravel/Jetstream app to efficiently run on Zerops, these are the general steps we took:
-
-- Add [zerops.yml](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops.yml) to your repository, our example includes idempotent migrations, caching, and optimized build process
-- Add [league/flysystem-aws-s3-v3](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/composer.json#L14) to your composer.json to support Object Storage file system
-- Setup [Jetstream config](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/config/jetstream.php#L79) to use object storage for file system
-- Utilize Zerops [environment variables](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops.yml#L25-L75) and [secrets](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops-project-import.yml#L12-L16) to setup S3 for file system, Redis for cache and sessions, and trusted proxies to work with reverse proxy load balancer
-- In case of true production setup, setup `MAIL_` environments to match your SMTP provider or server.
-
-<br/>
-<br/>
-
-Need help setting your project up? Join [Zerops Discord community](https://discord.com/invite/WDvCZ54).
+Need help setting your project up? Join our welcoming [Zerops Discord community](https://discord.com/invite/WDvCZ54).
