@@ -250,6 +250,25 @@ Base of the recipe is ready for production, the difference comes down to:
 
 <!-- #ZEROPS_EXTRACT_START:knowledge-base# -->
 
+### Maintenance Mode
+
+Laravel provides very useful tool to turn your application to maintenance mode via `php artisan down` (more about it [Laravel documentation](https://laravel.com/docs/12.x/configuration#maintenance-mode)).
+This app uses the `cache` maintenance driver as defined in environment variables section of [zerops.yaml](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops.yaml).
+This allows consistent usage for highly-available [multi-container setups](https://laravel.com/docs/12.x/configuration#maintenance-mode-on-multiple-servers).
+
+> [!CAUTION]
+> Before putting the Laravel app to maintenance mode via `php artisan down` command, **make sure to disable the health check!**
+> The last thing needed during maintenance is to let Zerops mark the container as failed and eventually delete it.
+> Use the [zsc health-check](https://docs.zerops.io/references/zsc#health-check) commands to disable the health check before proceeding with the maintenance.
+> 
+> ```shell
+> zsc health-check disable
+> php artisan down
+> # do stuff
+> php artisan up
+> zsc health-check enable
+> ```
+
 ### Temporary Upscaling when Playing Around
 
 Efficiently configured deployments use just enough resources (especially RAM) to save costs.
@@ -261,6 +280,7 @@ without to need to change service settings.
 
 This tool is utilized in the [`run.initCommands` in `dev` setup](https://github.com/zerops-recipe-apps/laravel-jetstream-app/blob/main/zerops.yaml) of this recipe app,
 to allocate extra resource for the `composer install` and `npm install` commands.
+
 
 <!-- #ZEROPS_EXTRACT_END:knowledge-base# -->
 

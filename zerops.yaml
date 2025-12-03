@@ -23,8 +23,6 @@ zerops:
         APP_LOCALE: en
         APP_FAKER_LOCALE: en_US
         APP_FALLBACK_LOCALE: en
-        APP_MAINTENANCE_DRIVER: file
-        APP_MAINTENANCE_STORE: database
         APP_TIMEZONE: UTC
         # Laravel checks the 'Host' header against this value.
         # Feel free to change this value to your own custom domain,
@@ -88,6 +86,11 @@ zerops:
         TRUSTED_PROXIES: "*"
         # Specify S3-like object storage as filesystem.
         FILESYSTEM_DISK: s3
+
+        # Store the maintenance information via cache driver,
+        # so the multi-container setups work as expected.
+        APP_MAINTENANCE_DRIVER: cache
+        APP_MAINTENANCE_STORE: database
 
   - setup: prod
     extends: base
