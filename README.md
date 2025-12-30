@@ -1,4 +1,4 @@
-# Zerops x Laravel Jetstream
+# Zerops x <!-- #ZEROPS_EXTRACT_START:name# --> Laravel Jetstream <!-- #ZEROPS_EXTRACT_END:name# -->
 
 <!-- #ZEROPS_EXTRACT_START:intro# -->
 [Laravel Jetstream](https://jetstream.laravel.com/introduction.html) is an advanced starter kit by Laravel. This showcases how to best integrate Jetstream apps with Zerops to setup the deploy pipeline, configure for high availability and handle migrations and upgrades.
