@@ -12,12 +12,16 @@ Laravel 11 + Jetstream 5 (Inertia/Vue 3) recipe on Zerops with PostgreSQL, KeyDB
 
 Runtime (`php-nginx`) auto-serves PHP changes immediately — edit `.blade.php` / `.php` and they take effect on the next request.
 
-**Vite dev server is NOT auto-started.** For frontend asset HMR, the agent must start it manually:
+**The `dev` setup intentionally skips `npm run build` in `buildCommands`** to keep the HMR workflow (`npm run dev`) fast. Consequence: `public/build/manifest.json` does NOT exist after a fresh deploy, so any view using `@vite(...)` (or the Inertia/Vue page entrypoints) throws HTTP 500 `Vite manifest not found` on the first request.
 
-- Vite dev command: `npm run dev`
-- Build frontend assets (instead of HMR): `npm run build`
+**After every `zerops_deploy` on this service and BEFORE running `zerops_verify`**, do ONE of:
 
-**All platform operations (start/stop of Vite, deploy, env / scaling / storage / domains) go through the Zerops development workflow via `zcp` MCP tools. Don't shell out to `zcli`.**
+- **One-shot build** — `ssh appdev 'cd /var/www && npm run build'`. Creates the manifest; survives until the next deploy rsyncs the build tree back in.
+- **Long-running dev server (HMR)** — `ssh appdev 'cd /var/www && nohup npm run dev > /tmp/vite.log 2>&1 &'`. Drops `public/build/hot`; Laravel's `@vite` helper routes asset URLs to the dev server. Containers restart on every `zerops_deploy`, so rerun after each redeploy.
+
+**Do NOT add `npm run build` to dev `buildCommands`** — it adds ~20–30 s to every push and defeats the HMR-first design.
+
+**All platform operations (deploy, env / scaling / storage / domains) go through the Zerops development workflow via `zcp` MCP tools. Don't shell out to `zcli`.**
 
 ## Notes
 
