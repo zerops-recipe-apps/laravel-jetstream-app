@@ -76,6 +76,8 @@ zerops:
         REDIS_CLIENT: phpredis
         REDIS_HOST: redis
         REDIS_PORT: 6379
+        # Valkey can be password-protected.
+        REDIS_PASSWORD: ${redis_password}
         SESSION_DRIVER: redis
         SESSION_ENCRYPT: false
         SESSION_LIFETIME: 120
