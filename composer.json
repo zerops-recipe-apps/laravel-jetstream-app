@@ -1,9 +1,14 @@
 {
-    "name": "laravel/laravel",
+    "name": "zerops/laravel-jetstream-app",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Laravel 11 + Jetstream 5 (Inertia/Vue SSR) recipe on Zerops with PostgreSQL, Redis, S3, and Mailpit.",
+    "keywords": ["laravel", "jetstream", "inertia", "vue", "zerops"],
     "license": "MIT",
+    "homepage": "https://github.com/zerops-recipe-apps/laravel-jetstream-app",
+    "support": {
+        "issues": "https://github.com/zerops-recipe-apps/laravel-jetstream-app/issues",
+        "source": "https://github.com/zerops-recipe-apps/laravel-jetstream-app"
+    },
     "require": {
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^1.0",
