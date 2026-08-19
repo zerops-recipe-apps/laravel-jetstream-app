@@ -1,6 +1,6 @@
 # laravel-jetstream-app
 
-Laravel 11 + Jetstream 5 (Inertia/Vue 3) recipe on Zerops with PostgreSQL, KeyDB/Redis, S3-compatible object storage, and Mailpit — shared `base` setup extended by `prod` and `dev`.
+Laravel 13 + Jetstream 5 (Inertia/Vue 3) recipe on Zerops with PostgreSQL, KeyDB/Redis, S3-compatible object storage, and Mailpit — shared `base` setup extended by `prod` and `dev`.
 
 ## Zerops service facts
 
