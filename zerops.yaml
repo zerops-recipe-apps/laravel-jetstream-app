@@ -10,13 +10,14 @@ zerops:
   - setup: base
     run:
       os: ubuntu
-      base: php-nginx@8.4
+      base: php-nginx@8.5
       # This setup uses PHP 8.4, which is compatible with the application's
       # requirement of PHP ^8.2 as specified in composer.json.
       # PHP applications generally require a web server
       # such as Nginx or Apache HTTP server.
       # Read more about it here: https://docs.zerops.io/php/how-to/customize-web-server#customize-nginx-configuration
       siteConfigPath: site.conf.tmpl
+      documentRoot: public
       # Most of the environment variables are shared between
       # the two setups, define once and reuse via 'extend' directive.
       envVariables:
@@ -65,9 +66,10 @@ zerops:
         # see https://docs.zerops.io/references/smtp for clarification.
         MAIL_FROM_ADDRESS: hello@example.com
         MAIL_FROM_NAME: ZeropsLaravel
-        MAIL_HOST: mailpit
-        MAIL_MAILER: smtp
-        MAIL_PORT: 1025
+        # Small-prod imports omit Mailpit — use log driver unless SMTP overrides are set.
+        MAIL_MAILER: ${MAIL_MAILER_OVERRIDE:-log}
+        MAIL_HOST: ${MAIL_HOST_OVERRIDE:-}
+        MAIL_PORT: ${MAIL_PORT_OVERRIDE:-1025}
 
         BROADCAST_CONNECTION: redis
         CACHE_PREFIX: cache
@@ -103,7 +105,7 @@ zerops:
       # matching the versions used in the runtime environment.
       os: ubuntu
       base:
-        - php@8.4
+        - php@8.5
         - nodejs@22
       # The Laravel Jetstream example app uses Inertia with Vue.js stack
       # (https://jetstream.laravel.com/introduction.html#inertia-vue).
@@ -111,10 +113,21 @@ zerops:
       # then build the Inertia frontend assets including SSR support via npm.
       buildCommands:
         - composer install --optimize-autoloader --no-dev
-        - npm install
+        - npm ci
         - npm run build
-      # Deploy all source, fetched and built application files.
-      deployFiles: ./
+      deployFiles:
+        - app
+        - bootstrap
+        - config
+        - database
+        - public
+        - resources/views
+        - routes
+        - storage
+        - vendor
+        - artisan
+        - composer.json
+        - bootstrap/ssr
       # Cache dependencies for faster incremental builds.
       # For more information, please visit: https://docs.zerops.io/features/build-cache
       cache:
@@ -144,11 +157,10 @@ zerops:
       # right after creating every runtime container
       # of the given application version (associated with this 'zerops.yaml').
       initCommands:
-        - php artisan view:cache
+        - zsc execOnce ${appVersionId} --retryUntilSuccessful -- php artisan migrate --force
         - php artisan config:cache
         - php artisan route:cache
-        - php artisan migrate --isolated --force
-        - php artisan optimize
+        - php artisan view:cache
       # Zerops also supports continuous health-checks
       # in already running deployed runtime containers.
       # More about it here: https://docs.zerops.io/zerops-yaml/specification#healthcheck-
@@ -175,6 +187,7 @@ zerops:
         - node -v
       # Turn on debug and set other setup-specific environment variables.
       envVariables:
+        APP_KEY: ${APP_SECRET}
         APP_NAME: ZeropsLaravelJetstreamDev
         APP_DEBUG: true
         APP_ENV: development
