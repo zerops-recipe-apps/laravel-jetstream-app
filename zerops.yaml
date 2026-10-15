@@ -136,6 +136,7 @@ zerops:
     run:
       # Turn off debug and set other setup-specific environment variables.
       envVariables:
+        APP_KEY: ${APP_SECRET}
         APP_NAME: ZeropsLaravelJetstreamProd
         APP_DEBUG: false
         APP_ENV: production
