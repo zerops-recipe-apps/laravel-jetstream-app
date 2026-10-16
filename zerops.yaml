@@ -127,6 +127,7 @@ zerops:
         - vendor
         - artisan
         - composer.json
+        - site.conf.tmpl
         - bootstrap/ssr
       # Cache dependencies for faster incremental builds.
       # For more information, please visit: https://docs.zerops.io/features/build-cache
